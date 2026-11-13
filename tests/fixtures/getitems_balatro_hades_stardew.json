@@ -1,0 +1,578 @@
+{
+ "response": {
+  "store_items": [
+   {
+    "item_type": 0,
+    "id": 2379780,
+    "success": 1,
+    "visible": true,
+    "name": "Balatro",
+    "store_url_path": "app/2379780/Balatro",
+    "store_url_slug": "Balatro",
+    "appid": 2379780,
+    "type": 0,
+    "tagids": [
+     1666,
+     1716,
+     1091588,
+     32322,
+     4182,
+     3964,
+     9,
+     4711,
+     3959,
+     492,
+     1677,
+     597,
+     791774,
+     4026,
+     3871,
+     6426,
+     1654,
+     1741,
+     1773,
+     16250
+    ],
+    "categories": {
+     "supported_player_categoryids": [
+      2
+     ],
+     "feature_categoryids": [
+      22,
+      29,
+      66,
+      68,
+      74,
+      76,
+      77,
+      23,
+      62
+     ],
+     "controller_categoryids": [
+      28,
+      57,
+      58
+     ]
+    },
+    "reviews": {
+     "summary_filtered": {
+      "review_count": 163033,
+      "percent_positive": 97,
+      "review_score": 9,
+      "review_score_label": "Overwhelmingly Positive"
+     },
+     "summary_language_specific": {
+      "review_count": 105741,
+      "percent_positive": 98,
+      "review_score": 9,
+      "review_score_label": "Overwhelmingly Positive"
+     }
+    },
+    "basic_info": {
+     "short_description": "The poker roguelike. Balatro is a hypnotically satisfying deckbuilder where you play illegal poker hands, discover game-changing jokers, and trigger adrenaline-pumping, outrageous combos.",
+     "publishers": [
+      {
+       "name": "Playstack",
+       "creator_clan_account_id": 39826181
+      }
+     ],
+     "developers": [
+      {
+       "name": "LocalThunk"
+      }
+     ]
+    },
+    "tags": [
+     {
+      "tagid": 1666,
+      "weight": 829
+     },
+     {
+      "tagid": 1716,
+      "weight": 770
+     },
+     {
+      "tagid": 1091588,
+      "weight": 731
+     },
+     {
+      "tagid": 32322,
+      "weight": 654
+     },
+     {
+      "tagid": 4182,
+      "weight": 641
+     },
+     {
+      "tagid": 3964,
+      "weight": 582
+     },
+     {
+      "tagid": 9,
+      "weight": 581
+     },
+     {
+      "tagid": 4711,
+      "weight": 566
+     },
+     {
+      "tagid": 3959,
+      "weight": 518
+     },
+     {
+      "tagid": 492,
+      "weight": 463
+     },
+     {
+      "tagid": 1677,
+      "weight": 430
+     },
+     {
+      "tagid": 597,
+      "weight": 422
+     },
+     {
+      "tagid": 791774,
+      "weight": 388
+     },
+     {
+      "tagid": 4026,
+      "weight": 382
+     },
+     {
+      "tagid": 3871,
+      "weight": 377
+     },
+     {
+      "tagid": 6426,
+      "weight": 365
+     },
+     {
+      "tagid": 1654,
+      "weight": 352
+     },
+     {
+      "tagid": 1741,
+      "weight": 329
+     },
+     {
+      "tagid": 1773,
+      "weight": 319
+     },
+     {
+      "tagid": 16250,
+      "weight": 291
+     }
+    ],
+    "release": {
+     "steam_release_date": 1708440403
+    },
+    "platforms": {
+     "windows": true,
+     "mac": true,
+     "vr_support": {},
+     "steam_deck_compat_category": 3,
+     "steam_os_compat_category": 2,
+     "steam_frame_compat_category": 3,
+     "steam_machine_compat_category": 3
+    },
+    "best_purchase_option": {
+     "packageid": 856021,
+     "purchase_option_name": "Balatro",
+     "final_price_in_cents": "1499",
+     "formatted_final_price": "$14.99",
+     "user_can_purchase_as_gift": true,
+     "hide_discount_pct_for_compliance": false,
+     "included_game_count": 1,
+     "must_purchase_as_set": false,
+     "package_group": "default",
+     "price_cannot_be_displayed_as_discount": false
+    }
+   },
+   {
+    "item_type": 0,
+    "id": 1145360,
+    "success": 1,
+    "visible": true,
+    "name": "Hades",
+    "store_url_path": "app/1145360/Hades",
+    "store_url_slug": "Hades",
+    "appid": 1145360,
+    "type": 0,
+    "tagids": [
+     42804,
+     3959,
+     1646,
+     16094,
+     492,
+     19,
+     1716,
+     4182,
+     1756,
+     1742,
+     1720,
+     122,
+     4711,
+     5851,
+     4026,
+     6815,
+     4231,
+     4166,
+     44868,
+     1759
+    ],
+    "categories": {
+     "supported_player_categoryids": [
+      2
+     ],
+     "feature_categoryids": [
+      22,
+      29,
+      13,
+      23,
+      41,
+      42,
+      43,
+      62
+     ],
+     "controller_categoryids": [
+      28
+     ]
+    },
+    "reviews": {
+     "summary_filtered": {
+      "review_count": 287910,
+      "percent_positive": 97,
+      "review_score": 9,
+      "review_score_label": "Overwhelmingly Positive"
+     },
+     "summary_language_specific": {
+      "review_count": 143349,
+      "percent_positive": 98,
+      "review_score": 9,
+      "review_score_label": "Overwhelmingly Positive"
+     }
+    },
+    "basic_info": {
+     "short_description": "Defy the god of the dead as you hack and slash out of the Underworld in this rogue-like dungeon crawler from the creators of Bastion, Transistor, and Pyre.",
+     "publishers": [
+      {
+       "name": "Supergiant Games",
+       "creator_clan_account_id": 3584665
+      }
+     ],
+     "developers": [
+      {
+       "name": "Supergiant Games",
+       "creator_clan_account_id": 3584665
+      }
+     ],
+     "franchises": [
+      {
+       "name": "Hades"
+      }
+     ]
+    },
+    "tags": [
+     {
+      "tagid": 42804,
+      "weight": 1050
+     },
+     {
+      "tagid": 3959,
+      "weight": 764
+     },
+     {
+      "tagid": 1646,
+      "weight": 750
+     },
+     {
+      "tagid": 16094,
+      "weight": 733
+     },
+     {
+      "tagid": 492,
+      "weight": 733
+     },
+     {
+      "tagid": 19,
+      "weight": 635
+     },
+     {
+      "tagid": 1716,
+      "weight": 621
+     },
+     {
+      "tagid": 4182,
+      "weight": 577
+     },
+     {
+      "tagid": 1756,
+      "weight": 555
+     },
+     {
+      "tagid": 1742,
+      "weight": 545
+     },
+     {
+      "tagid": 1720,
+      "weight": 508
+     },
+     {
+      "tagid": 122,
+      "weight": 499
+     },
+     {
+      "tagid": 4711,
+      "weight": 461
+     },
+     {
+      "tagid": 5851,
+      "weight": 362
+     },
+     {
+      "tagid": 4026,
+      "weight": 329
+     },
+     {
+      "tagid": 6815,
+      "weight": 240
+     },
+     {
+      "tagid": 4231,
+      "weight": 235
+     },
+     {
+      "tagid": 4166,
+      "weight": 230
+     },
+     {
+      "tagid": 44868,
+      "weight": 81
+     },
+     {
+      "tagid": 1759,
+      "weight": 80
+     }
+    ],
+    "release": {
+     "steam_release_date": 1600353507,
+     "original_steam_release_date": 1575997560
+    },
+    "platforms": {
+     "windows": true,
+     "mac": true,
+     "vr_support": {},
+     "steam_deck_compat_category": 3,
+     "steam_os_compat_category": 2,
+     "steam_frame_compat_category": 3,
+     "steam_machine_compat_category": 3
+    },
+    "best_purchase_option": {
+     "packageid": 415372,
+     "purchase_option_name": "Hades",
+     "final_price_in_cents": "2499",
+     "formatted_final_price": "$24.99",
+     "user_can_purchase_as_gift": true,
+     "hide_discount_pct_for_compliance": false,
+     "included_game_count": 1,
+     "must_purchase_as_set": false,
+     "package_group": "default",
+     "price_cannot_be_displayed_as_discount": false
+    }
+   },
+   {
+    "item_type": 0,
+    "id": 413150,
+    "success": 1,
+    "visible": true,
+    "name": "Stardew Valley",
+    "store_url_path": "app/413150/Stardew_Valley",
+    "store_url_slug": "Stardew_Valley",
+    "appid": 413150,
+    "type": 0,
+    "tagids": [
+     87918,
+     3964,
+     3859,
+     10235,
+     1654,
+     122,
+     599,
+     22602,
+     1702,
+     3810,
+     492,
+     1643,
+     1695,
+     597,
+     4182,
+     3871,
+     9551,
+     4726,
+     1756,
+     15564
+    ],
+    "categories": {
+     "supported_player_categoryids": [
+      2,
+      1,
+      9,
+      38,
+      48,
+      39,
+      24
+     ],
+     "feature_categoryids": [
+      22,
+      29,
+      23,
+      41,
+      42,
+      44,
+      62
+     ],
+     "controller_categoryids": [
+      28
+     ]
+    },
+    "reviews": {
+     "summary_filtered": {
+      "review_count": 904710,
+      "percent_positive": 98,
+      "review_score": 9,
+      "review_score_label": "Overwhelmingly Positive"
+     },
+     "summary_language_specific": {
+      "review_count": 397174,
+      "percent_positive": 98,
+      "review_score": 9,
+      "review_score_label": "Overwhelmingly Positive"
+     }
+    },
+    "basic_info": {
+     "short_description": "You've inherited your grandfather's old farm plot in Stardew Valley. Armed with hand-me-down tools and a few coins, you set out to begin your new life. Can you learn to live off the land and turn these overgrown fields into a thriving home?",
+     "publishers": [
+      {
+       "name": "ConcernedApe",
+       "creator_clan_account_id": 32938395
+      }
+     ],
+     "developers": [
+      {
+       "name": "ConcernedApe",
+       "creator_clan_account_id": 32938395
+      }
+     ]
+    },
+    "tags": [
+     {
+      "tagid": 87918,
+      "weight": 859
+     },
+     {
+      "tagid": 3964,
+      "weight": 789
+     },
+     {
+      "tagid": 3859,
+      "weight": 780
+     },
+     {
+      "tagid": 10235,
+      "weight": 767
+     },
+     {
+      "tagid": 1654,
+      "weight": 684
+     },
+     {
+      "tagid": 122,
+      "weight": 684
+     },
+     {
+      "tagid": 599,
+      "weight": 554
+     },
+     {
+      "tagid": 22602,
+      "weight": 547
+     },
+     {
+      "tagid": 1702,
+      "weight": 471
+     },
+     {
+      "tagid": 3810,
+      "weight": 471
+     },
+     {
+      "tagid": 492,
+      "weight": 470
+     },
+     {
+      "tagid": 1643,
+      "weight": 386
+     },
+     {
+      "tagid": 1695,
+      "weight": 366
+     },
+     {
+      "tagid": 597,
+      "weight": 364
+     },
+     {
+      "tagid": 4182,
+      "weight": 355
+     },
+     {
+      "tagid": 3871,
+      "weight": 317
+     },
+     {
+      "tagid": 9551,
+      "weight": 316
+     },
+     {
+      "tagid": 4726,
+      "weight": 300
+     },
+     {
+      "tagid": 1756,
+      "weight": 265
+     },
+     {
+      "tagid": 15564,
+      "weight": 241
+     }
+    ],
+    "release": {
+     "steam_release_date": 1456509578
+    },
+    "platforms": {
+     "windows": true,
+     "mac": true,
+     "steamos_linux": true,
+     "vr_support": {},
+     "steam_deck_compat_category": 3,
+     "steam_os_compat_category": 2,
+     "steam_frame_compat_category": 3,
+     "steam_machine_compat_category": 3
+    },
+    "best_purchase_option": {
+     "packageid": 82712,
+     "purchase_option_name": "Stardew Valley",
+     "final_price_in_cents": "1499",
+     "formatted_final_price": "$14.99",
+     "user_can_purchase_as_gift": true,
+     "hide_discount_pct_for_compliance": false,
+     "included_game_count": 1,
+     "must_purchase_as_set": false,
+     "package_group": "default",
+     "price_cannot_be_displayed_as_discount": false
+    }
+   }
+  ]
+ }
+}

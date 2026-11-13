@@ -1,0 +1,142 @@
+{
+ "response": {
+  "query_summary": {
+   "num_reviews": 5,
+   "review_score": 9,
+   "review_score_desc": "Overwhelmingly Positive",
+   "total_positive": 103610,
+   "total_negative": 2057,
+   "total_reviews": 105667
+  },
+  "reviews": [
+   {
+    "recommendationid": "237733468",
+    "author": {
+     "steamid": "76561198000000000",
+     "num_reviews": 89,
+     "playtime_forever": 1905,
+     "playtime_last_two_weeks": 0,
+     "playtime_at_review": 1872,
+     "last_played": 1793206811
+    },
+    "language": "english",
+    "review": "[sample review text 0]",
+    "timestamp_created": 1792016109,
+    "timestamp_updated": 1792016109,
+    "voted_up": true,
+    "votes_up": 83,
+    "votes_funny": 21,
+    "weighted_vote_score": 0.8537272214889526,
+    "comment_count": 1,
+    "steam_purchase": true,
+    "received_for_free": false,
+    "written_during_early_access": false,
+    "primarily_steam_deck": false,
+    "refunded": false
+   },
+   {
+    "recommendationid": "238740986",
+    "author": {
+     "steamid": "76561198000000001",
+     "num_reviews": 1,
+     "playtime_forever": 4746,
+     "playtime_last_two_weeks": 5,
+     "playtime_at_review": 4729,
+     "last_played": 1793453846
+    },
+    "language": "english",
+    "review": "[sample review text 1]",
+    "timestamp_created": 1793187608,
+    "timestamp_updated": 1793187608,
+    "voted_up": true,
+    "votes_up": 65,
+    "votes_funny": 16,
+    "weighted_vote_score": 0.845177173614502,
+    "comment_count": 1,
+    "steam_purchase": true,
+    "received_for_free": false,
+    "written_during_early_access": false,
+    "primarily_steam_deck": false,
+    "refunded": false
+   },
+   {
+    "recommendationid": "238618819",
+    "author": {
+     "steamid": "76561198000000002",
+     "num_reviews": 2,
+     "playtime_forever": 633,
+     "playtime_last_two_weeks": 92,
+     "playtime_at_review": 519,
+     "last_played": 1793768357
+    },
+    "language": "english",
+    "review": "[sample review text 2]",
+    "timestamp_created": 1793028347,
+    "timestamp_updated": 1793054901,
+    "voted_up": true,
+    "votes_up": 47,
+    "votes_funny": 7,
+    "weighted_vote_score": 0.7623374462127686,
+    "comment_count": 0,
+    "steam_purchase": true,
+    "received_for_free": false,
+    "written_during_early_access": false,
+    "primarily_steam_deck": false,
+    "refunded": false
+   },
+   {
+    "recommendationid": "238754485",
+    "author": {
+     "steamid": "76561198000000003",
+     "num_reviews": 156,
+     "playtime_forever": 957,
+     "playtime_last_two_weeks": 19,
+     "playtime_at_review": 699,
+     "last_played": 1793552414
+    },
+    "language": "english",
+    "review": "[sample review text 3]",
+    "timestamp_created": 1793202495,
+    "timestamp_updated": 1793202495,
+    "voted_up": true,
+    "votes_up": 25,
+    "votes_funny": 26,
+    "weighted_vote_score": 0.7289398908615112,
+    "comment_count": 0,
+    "steam_purchase": true,
+    "received_for_free": false,
+    "written_during_early_access": false,
+    "primarily_steam_deck": false,
+    "refunded": false
+   },
+   {
+    "recommendationid": "238233995",
+    "author": {
+     "steamid": "76561198000000004",
+     "num_reviews": 5,
+     "playtime_forever": 22063,
+     "playtime_last_two_weeks": 344,
+     "playtime_at_review": 21778,
+     "last_played": 1794483366
+    },
+    "language": "english",
+    "review": "[sample review text 4]",
+    "timestamp_created": 1792586008,
+    "timestamp_updated": 1793511372,
+    "voted_up": true,
+    "votes_up": 21,
+    "votes_funny": 1,
+    "weighted_vote_score": 0.6776617765426636,
+    "comment_count": 0,
+    "steam_purchase": true,
+    "received_for_free": false,
+    "written_during_early_access": false,
+    "primarily_steam_deck": false,
+    "refunded": false
+   }
+  ],
+  "cursor": "AoIFQFWcl8AAAAB7mOWMBw==",
+  "day_range_used": 30,
+  "total_matching": 821
+ }
+}
