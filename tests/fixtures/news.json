@@ -1,0 +1,76 @@
+{
+ "appnews": {
+  "appid": 2379780,
+  "newsitems": [
+   {
+    "gid": "1844115010489168",
+    "title": "Balatro 1.1 Update Details Have Been Revealed, New Mechanics and New Jokers Await!",
+    "url": "https://steamstore-a.akamaihd.net/news/externalpost/CGMagazine/1844115010489168",
+    "is_external_url": true,
+    "author": "Philip Watson",
+    "contents": "The mastermind behind <em>Balatro</em>, LocalThunk, shared a much clearer look at what is coming in the long-...",
+    "feedlabel": "CGMagazine",
+    "date": 1789566291,
+    "feedname": "CGMagazine",
+    "feed_type": 0,
+    "appid": 2379780
+   },
+   {
+    "gid": "1831432155580317",
+    "title": "Steam Deckbuilders Fest & Balatro Vinyl Figures",
+    "url": "https://steamstore-a.akamaihd.net/news/externalpost/steam_community_announcements/1831432155580317",
+    "is_external_url": true,
+    "author": "LizPlaystack",
+    "contents": "Deckbuilders Fest!Enjoy 20% off during Steam Deckbuilder Fest. Don’t miss it.Last Chance for Balatro...",
+    "feedlabel": "Community Announcements",
+    "date": 1777992932,
+    "feedname": "steam_community_announcements",
+    "feed_type": 1,
+    "appid": 2379780
+   },
+   {
+    "gid": "1815034433039167",
+    "title": "Balatro Calendar",
+    "url": "https://steamstore-a.akamaihd.net/news/externalpost/steam_community_announcements/1815034433039167",
+    "is_external_url": true,
+    "author": "LizPlaystack",
+    "contents": "Hi everyone,Some new merch has joined the Balatro universe!We’ve teamed up with Fangamer to release ...",
+    "feedlabel": "Community Announcements",
+    "date": 1762275456,
+    "feedname": "steam_community_announcements",
+    "feed_type": 1,
+    "appid": 2379780
+   },
+   {
+    "gid": "1792116353353619",
+    "title": "After junking Balatro's 18 rating, PEGI will develop \"a more granular\" rating system for gambling themes",
+    "url": "https://steamstore-a.akamaihd.net/news/externalpost/Rock, Paper, Shotgun/1792116353353619",
+    "is_external_url": true,
+    "author": "",
+    "contents": "Sorcerous cardgame <a data-keyword=\"true\" href=\"https://www.rockpapershotgun.com/games/balatro\">Balatro</a> and slot machine <a href=\"https://www.rockpapershotgun.com/best-rpgs\">RPG</a> <a href=\"https://www.rockpapershotgun.com/games/luck-be-a-landlord\">Luck Be A Landlord</a> have been reclassified as fit for...",
+    "feedlabel": "Rock, Paper, Shotgun",
+    "date": 1740481087,
+    "feedname": "Rock, Paper, Shotgun",
+    "feed_type": 0,
+    "appid": 1404850
+   },
+   {
+    "gid": "1792116353331151",
+    "title": "Welcoming Friends of Jimbo 4!",
+    "url": "https://steamstore-a.akamaihd.net/news/externalpost/steam_community_announcements/1792116353331151",
+    "is_external_url": true,
+    "author": "LizPlaystack",
+    "contents": "Customise your decks with stunning new cosmetic card skins featuring fan-favourite characters like V...",
+    "feedlabel": "Community Announcements",
+    "date": 1740421660,
+    "feedname": "steam_community_announcements",
+    "feed_type": 1,
+    "appid": 2379780,
+    "tags": [
+     "workshop"
+    ]
+   }
+  ],
+  "count": 61
+ }
+}

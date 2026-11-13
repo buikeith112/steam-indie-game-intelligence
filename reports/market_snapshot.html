@@ -1,0 +1,471 @@
+<title>Steam Indie Market Snapshot</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single reading column of findings; each finding = claim, chart, caveat, data table. */
+:root {
+  --page: #f6f7f8;
+  --surface: #fcfcfb;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #7b7a75;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --series: #2a78d6;
+  --series-soft: #cde2fb;
+  --caution: #b45309;
+  --caution-bg: #fdf3e7;
+  --ring: rgba(11,11,11,0.10);
+  --good: #1f7a4d;
+  --code-bg: #f0f1ee;
+  --code-comment: #6b6a64;
+  --font-display: "Archivo", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #0f1012; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #8f8e88;
+    --grid: #2c2c2a; --axis: #45453f; --series: #3987e5; --series-soft: #1c3557;
+    --caution: #f0a35c; --caution-bg: #2a1f14; --ring: rgba(255,255,255,0.10); color-scheme: dark;
+    --good: #5cc08c; --code-bg: #131414; --code-comment: #8f8e88;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #0f1012; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #8f8e88;
+  --grid: #2c2c2a; --axis: #45453f; --series: #3987e5; --series-soft: #1c3557;
+  --caution: #f0a35c; --caution-bg: #2a1f14; --ring: rgba(255,255,255,0.10); color-scheme: dark;
+  --good: #5cc08c; --code-bg: #131414; --code-comment: #8f8e88;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--page); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+main { max-width: 860px; margin: 0 auto; padding-block: 48px 72px; display: flex; flex-direction: column; gap: 56px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(2rem, 5vw, 2.9rem); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: 1.55rem; font-weight: 700; letter-spacing: -0.01em; }
+p { margin: 0; max-width: 66ch; }
+.eyebrow { font-family: var(--font-data); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+header { display: flex; flex-direction: column; gap: 14px; }
+.lede { font-size: 1.12rem; color: var(--ink-2); }
+.meta { font-family: var(--font-data); font-size: 0.8rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 18px; }
+
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 6px; }
+.tile b { font-family: var(--font-display); font-size: 2.1rem; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
+.tile span { font-size: 0.9rem; color: var(--ink-2); line-height: 1.4; }
+
+section.finding { display: flex; flex-direction: column; gap: 16px; }
+.q { font-family: var(--font-data); font-size: 0.78rem; color: var(--series); letter-spacing: 0.04em; }
+.claim { font-size: 1.05rem; }
+.chart { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 16px 16px 10px; position: relative; min-width: 0; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart-title { font-size: 0.85rem; font-weight: 600; color: var(--ink-2); margin-bottom: 6px; }
+.caveat { border-left: 3px solid var(--caution); background: var(--caution-bg); padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 0.93rem; color: var(--ink); max-width: none; }
+.caveat strong { color: var(--caution); }
+a { color: var(--series); text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--series); outline-offset: 2px; border-radius: 4px; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 0.85rem; min-width: 100%; }
+th, td { text-align: right; padding: 5px 10px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { color: var(--muted); font-weight: 500; }
+
+svg text { font-family: var(--font-body); fill: var(--ink-2); font-size: 12px; }
+svg .val { font-family: var(--font-data); fill: var(--ink); font-size: 11.5px; }
+svg .muted { fill: var(--muted); font-size: 11px; }
+svg .grid { stroke: var(--grid); stroke-width: 1; }
+svg .axis { stroke: var(--axis); stroke-width: 1; }
+svg .ref { stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 4 3; }
+svg .bar { fill: var(--series); }
+svg .bar.dim { fill: var(--series-soft); }
+svg .hit { fill: transparent; cursor: default; }
+svg .hit:hover + .bar, svg g.row:hover .bar { filter: brightness(1.12); }
+svg .dot { fill: var(--series); stroke: var(--surface); stroke-width: 2; }
+
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--surface); font-size: 0.8rem; line-height: 1.4;
+       padding: 7px 10px; border-radius: 6px; white-space: nowrap; z-index: 5; box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
+.tip b { font-weight: 600; }
+
+/* ---------- Technical appendix ---------- */
+.appendix { display: flex; flex-direction: column; gap: 44px; border-top: 2px solid var(--ink); padding-top: 28px; }
+.appendix > header p { color: var(--ink-2); }
+.block { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.block h3 { font-size: 1.2rem; font-weight: 700; display: flex; gap: 10px; align-items: baseline; }
+.block h3 .num { font-family: var(--font-data); font-size: 0.8rem; font-weight: 500; color: var(--series); }
+.block h4 { margin: 4px 0 0; font-size: 0.95rem; font-family: var(--font-display); }
+.block p, .block li { font-size: 0.95rem; }
+.block ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; max-width: 72ch; }
+code { font-family: var(--font-data); font-size: 0.86em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+
+.flow { display: flex; gap: 6px; align-items: stretch; }
+.stage { flex: 1 1 0; min-width: 0; background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+.stage .step { font-family: var(--font-data); font-size: 0.68rem; letter-spacing: 0.06em; color: var(--series); }
+.stage strong { font-family: var(--font-display); font-size: 0.95rem; line-height: 1.2; }
+.stage p { font-size: 0.8rem; line-height: 1.45; color: var(--ink-2); }
+.stage .stat { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--grid); font-size: 0.75rem; color: var(--muted); line-height: 1.35; }
+.stage .stat b { display: block; font-family: var(--font-display); font-size: 1.25rem; color: var(--ink); font-weight: 800; }
+.arrow { flex: 0 0 12px; align-self: center; text-align: center; color: var(--muted); font-size: 1rem; }
+.arrow::before { content: "→"; }
+.opsband { background: var(--surface); border: 1px dashed var(--axis); border-radius: 10px; padding: 10px 14px; font-size: 0.85rem; color: var(--ink-2); }
+.opsband b { color: var(--ink); }
+
+.erd { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 12px; overflow-x: auto; }
+.erd svg { display: block; width: 100%; min-width: 720px; height: auto; }
+.erd .box { fill: var(--surface); stroke: var(--axis); stroke-width: 1; }
+.erd .hub { fill: var(--series-soft); stroke: var(--series); stroke-width: 1.5; }
+.erd .layer { fill: var(--page); stroke: var(--axis); stroke-width: 1; stroke-dasharray: 4 3; }
+.erd .link { stroke: var(--axis); stroke-width: 1.5; fill: none; }
+.erd .flowline { stroke: var(--muted); stroke-width: 1.5; fill: none; stroke-dasharray: 5 4; }
+.erd .head { fill: var(--muted); }
+.erd text.t { font-weight: 600; fill: var(--ink); font-size: 12.5px; }
+.erd text.k { font-family: var(--font-data); fill: var(--muted); font-size: 10.5px; }
+.erd text.n { font-family: var(--font-data); fill: var(--ink-2); font-size: 10.5px; text-anchor: end; }
+.erd text.f { fill: var(--ink); font-size: 11.5px; }
+.erd text.cap { font-family: var(--font-data); fill: var(--muted); font-size: 10px; letter-spacing: 0.06em; }
+
+.ref-table { width: 100%; }
+.ref-table th, .ref-table td { text-align: left; white-space: normal; vertical-align: top; padding: 7px 10px; font-size: 0.86rem; }
+.ref-table td:first-child { white-space: nowrap; font-weight: 500; }
+.ref-table td code { white-space: nowrap; }
+
+pre.sql { margin: 0; background: var(--code-bg); border: 1px solid var(--ring); border-radius: 10px; padding: 14px 16px; overflow-x: auto;
+          font-family: var(--font-data); font-size: 0.78rem; line-height: 1.55; color: var(--ink); }
+pre.sql .c { color: var(--code-comment); }
+.query { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 12px; align-items: start; }
+.result { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 10px 12px; }
+.result .cap { font-family: var(--font-data); font-size: 0.68rem; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 4px; }
+.result td.gap { text-align: center; color: var(--muted); }
+
+.status { font-family: var(--font-data); font-size: 0.78rem; white-space: nowrap; }
+.status.ok { color: var(--good); }
+.status.gate { color: var(--caution); }
+
+footer { font-size: 0.88rem; color: var(--ink-2); display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--grid); padding-top: 22px; }
+footer ul { margin: 0; padding-left: 18px; max-width: 70ch; }
+
+@media (max-width: 760px) {
+  .flow { flex-direction: column; }
+  .arrow::before { content: "↓"; }
+  .query { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+  main { padding-block: 28px 48px; gap: 44px; }
+  .tiles { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    --page: #ffffff; --surface: #ffffff; --ink: #0b0b0b; --ink-2: #52514e; --muted: #7b7a75; --grid: #e1e0d9; --axis: #c3c2b7;
+    --series: #2a78d6; --series-soft: #cde2fb; --caution: #b45309; --caution-bg: #fdf3e7; --ring: rgba(11,11,11,0.14);
+    --good: #1f7a4d; --code-bg: #f3f4f1; --code-comment: #6b6a64; color-scheme: light;
+  }
+  body { font-size: 14.5px; }
+  main { padding-block: 0; gap: 26px; }
+  section.finding { gap: 10px; }
+  .chart { padding: 10px 12px 6px; }
+  .caveat { padding: 8px 12px; font-size: 0.88rem; }
+  .chart, .tiles, .flow, .erd, pre.sql, .result, .caveat, .ref-table tr, .opsband { break-inside: avoid; }
+  h2, h3, h4 { break-after: avoid; }
+  .tip { display: none !important; }
+  .erd svg { min-width: 0; }
+  .query { grid-template-columns: minmax(0, 1fr); }
+  pre.sql { white-space: pre-wrap; overflow-wrap: anywhere; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  svg .bar, svg .dot { transition: filter 120ms ease; }
+}
+</style>
+
+<main>
+  <header>
+    <div class="eyebrow">Steam indie market · catalog crawl of 13 Nov 2026</div>
+    <h1>Steam Indie Market Snapshot</h1>
+    <p class="lede">Thousands of indie games launch on Steam every year, and half of them never reach 10 reviews. I wanted to understand what actually distinguishes the ones that succeed in a marketplace that crowded. I chose Steam because it is the largest storefront for PC games, and because its public store data shows review counts, prices and tags for every game, so I could build the dataset myself instead of relying on someone else's. I collected all 65,471 games tagged Indie, loaded them into PostgreSQL, and compared the hits with everything else.</p>
+    <div class="meta"><span>Source: Steam store &amp; Web APIs, SteamSpy</span><span>Popularity proxy: review count on the Steam store page</span><span>Pipeline: Python → PostgreSQL (raw → core → mart) → SQL-driven charts</span></div>
+  </header>
+
+  <div class="tiles" aria-label="Headline figures">
+    <div class="tile"><b>51%</b><span>of indie games launched since 2018 have fewer than 10 reviews</span></div>
+    <div class="tile"><b>71%</b><span>of all indie reviews go to the top 1% of games (552 titles)</span></div>
+    <div class="tile"><b>3.3%</b><span>of indie games launched since 2018 reached 1,000 reviews, our "hit" line</span></div>
+  </div>
+
+  <section class="finding" id="concentration">
+    <div class="q">MARKET SHAPE</div>
+    <h2>Attention is extremely concentrated</h2>
+    <p class="claim">Sorting the 55,113 indie games launched since 2018 by review count, the top 1% hold 70.7% of all reviews. The bottom half of the market holds 0.4%. Most indie releases are effectively invisible.</p>
+    <div class="chart"><div class="chart-title">Share of all reviews, by review-count rank group</div><div data-chart="concentration"></div></div>
+  </section>
+
+  <section class="finding" id="genres">
+    <div class="q">QUESTION 2 · GENRE SENTIMENT</div>
+    <h2>Platformers, puzzles and point-and-clicks are reviewed most kindly</h2>
+    <p class="claim">Among in-scope games with at least 50 reviews, 60% are rated 80% positive or better. 2D platformers (78%), point-and-click (77%) and puzzle games (74%) clear that bar most often. Incremental, simulation, strategy and RPG games sit near 50%. One plausible reason is that players of systems-heavy genres judge balance and content depth more harshly.</p>
+    <div class="chart"><div class="chart-title">Share of games rated ≥80% positive · genre tags with ≥400 games · dashed line = all indie (60%)</div><div data-chart="tags"></div></div>
+    <p class="caveat"><strong>How to read it.</strong> Genres are each game's top five user tags, so a game counts toward several genres. Only games with 50+ reviews are rated, which removes noisy tiny samples but also the many games that never found an audience.</p>
+  </section>
+
+  <section class="finding" id="price">
+    <div class="q">QUESTION 3 · PRICING</div>
+    <h2>Games priced $20–29.99 reach 1,000 reviews most often</h2>
+    <p class="claim">Of indie games launched 2018–2024, 33% of those priced $20–29.99 became hits, against 1.2% of games under $5. Hit rates climb steadily with price until $30, then fall back to 13%.</p>
+    <div class="chart"><div class="chart-title">Hit rate (≥1,000 reviews) by list price · games launched 2018–2024 · n under each bar</div><div data-chart="price"></div></div>
+    <p class="caveat"><strong>Price is not a lever here.</strong> Price mostly signals scope: a $25 game usually has a larger team, budget and marketing push than a $3 one. This shows where successful games sit, not that raising a price creates success. Prices are the current list price, used as a launch-price proxy.</p>
+  </section>
+
+  <section class="finding" id="opportunity">
+    <div class="q">NEW QUESTION · SUPPLY VS DEMAND</div>
+    <h2>The fastest-growing genres have the worst odds</h2>
+    <p class="claim">Action-adventure and 2D platformer releases more than tripled between 2018–20 and 2022–24, yet only 2–3% of those games became hits. Story-rich games grew about 10% and convert at 10.6%, the best of any large genre.</p>
+    <div class="chart"><div class="chart-title">Release growth (2022–24 releases ÷ 2018–20 releases) vs hit rate · tags with ≥1,500 games</div><div data-chart="opportunity"></div></div>
+  </section>
+
+  <section class="finding" id="segments">
+    <div class="q">NEW QUESTION · LAUNCH CHOICES</div>
+    <h2>Publisher-backed games become hits nearly three times as often</h2>
+    <p class="claim">Publisher-backed indie games hit 1,000 reviews 8.9% of the time, against 3.2% for self-published ones. Early Access launches do slightly better than direct launches (6.4% vs 4.1%), and games with a Mac build do better than those without (8.7% vs 3.6%).</p>
+    <div class="chart"><div class="chart-title">Hit rate (≥1,000 reviews) by launch attribute · games launched 2018–2024</div><div data-chart="segments"></div></div>
+    <p class="caveat"><strong>Two correlation traps.</strong> Steam Deck Verified games hit 24.8% of the time and untested games 0.5%. That does not mean Deck support sells games: Valve tests popular games first, so popularity drives the badge more than the reverse. Publishers also choose which games to sign, so part of their advantage is picking promising games, not only marketing them.</p>
+  </section>
+
+  <footer>
+    <strong>Method notes</strong>
+    <ul>
+      <li>Universe: released Steam games tagged Indie, listed with Steam's store query API. Steam lists only games on sale today, so games removed before the first crawl are missing and older cohorts look somewhat better than they were. Games removed from now on keep their rows and stay in every rate.</li>
+      <li>Hit = 1,000+ reviews as counted on the Steam store page. Reviews are an exact public count that tracks sales (roughly 30–60 sales per review).</li>
+      <li>Success rates use 2018–2024 launches so every game has had about two years to collect reviews. 2026 launch counts rose sharply in recent months, and many of those games have no reviews yet, so 2026 is excluded from rates.</li>
+      <li>Every chart is an association, not a causal effect.</li>
+      <li>A separate technical appendix covers the database design, data pipeline, SQL queries, refresh process and validation.</li>
+    </ul>
+  </footer>
+</main>
+
+<script>
+const DATA = {
+  concentration: [
+    { label: "Top 1%", share: 0.7073, games: 552 },
+    { label: "Next 9%", share: 0.2367, games: 4968 },
+    { label: "Next 40%", share: 0.0520, games: 22043 },
+    { label: "Bottom 50%", share: 0.0040, games: 27550 }
+  ],
+  vpOverall: 0.603,
+  tags: [
+    ["2D Platformer",415,0.781],["Point & Click",617,0.768],["Platformer",676,0.741],["Puzzle",1866,0.736],
+    ["Arcade",616,0.721],["Story Rich",1258,0.707],["Visual Novel",1216,0.703],["Mystery",431,0.666],
+    ["Exploration",928,0.665],["Psychological Horror",919,0.630],["Casual",4242,0.627],["Action-Adventure",407,0.622],
+    ["Roguelite",436,0.608],["Adventure",3856,0.599],["Dating Sim",440,0.598],["Shooter",464,0.591],
+    ["Roguelike",408,0.581],["Walking Simulator",438,0.559],["Horror",1338,0.558],["Action",3118,0.557],
+    ["FPS",405,0.521],["RPG",1932,0.511],["Strategy",1658,0.498],["Simulation",2422,0.495],
+    ["Hentai",793,0.487],["Incremental",460,0.470]
+  ].map(([tag, n, v]) => ({ tag, n, v })),
+  price: [
+    { bucket: "Free", n: 5163, hit: 0.0616, med: 39 },
+    { bucket: "Under $5", n: 16797, hit: 0.0120, med: 7 },
+    { bucket: "$5–9.99", n: 6530, hit: 0.0309, med: 12 },
+    { bucket: "$10–14.99", n: 2783, hit: 0.0844, med: 33 },
+    { bucket: "$15–19.99", n: 1544, hit: 0.1956, med: 105 },
+    { bucket: "$20–29.99", n: 578, hit: 0.3322, med: 184.5 },
+    { bucket: "$30+", n: 264, hit: 0.1288, med: 2 }
+  ],
+  opportunity: [
+    ["2D Platformer",2155,3.20,0.0209,7],["Action",12192,0.64,0.0358,11],["Action-Adventure",1660,3.71,0.0253,8],
+    ["Adventure",11311,0.68,0.0458,15],["Arcade",3219,1.54,0.0137,7],["Casual",15224,0.86,0.0269,11],
+    ["Exploration",2136,2.70,0.0585,17.5],["Horror",2561,1.29,0.0793,27],["Platformer",2823,1.23,0.0347,10],
+    ["Puzzle",6215,1.27,0.0386,13],["RPG",4739,0.65,0.0591,20],["Shooter",1962,1.49,0.0449,8],
+    ["Simulation",5379,0.74,0.0641,20],["Story Rich",2062,1.11,0.1057,42],["Strategy",5185,0.69,0.0449,13],
+    ["Visual Novel",2262,1.30,0.0637,33],["VR",1622,0.30,0.0228,11]
+  ].map(([tag, n, growth, hit, med]) => ({ tag, n, growth, hit, med })),
+  segments: [
+    { group: "Publisher", label: "Publisher-backed", n: 7515, hit: 0.0888 },
+    { group: "Publisher", label: "Self-published", n: 26446, hit: 0.0324 },
+    { group: "Launch", label: "Early Access first", n: 5480, hit: 0.0635 },
+    { group: "Launch", label: "Direct launch", n: 28636, hit: 0.0412 },
+    { group: "Platforms", label: "Has Mac build", n: 5956, hit: 0.0868 },
+    { group: "Platforms", label: "Windows only / no Mac", n: 28160, hit: 0.0359 },
+    { group: "Steam Deck", label: "Deck Verified", n: 2100, hit: 0.2481 },
+    { group: "Steam Deck", label: "Deck Playable", n: 4543, hit: 0.1609 },
+    { group: "Steam Deck", label: "Deck Unsupported", n: 1239, hit: 0.1114 },
+    { group: "Steam Deck", label: "Not yet tested", n: 26234, hit: 0.0053 }
+  ]
+};
+
+const NS = "http://www.w3.org/2000/svg";
+let PRINTING = false;
+const pct = (v, d = 1) => (v * 100).toFixed(d) + "%";
+const fmt = n => n.toLocaleString("en-US");
+function el(tag, attrs = {}, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function text(parent, x, y, str, attrs = {}) { const t = el("text", { x, y, ...attrs }, parent); t.textContent = str; return t; }
+function niceMax(v) { const steps = [0.05, 0.1, 0.2, 0.25, 0.4, 0.5, 0.75, 1]; return steps.find(s => s >= v) || Math.ceil(v); }
+
+// Shared tooltip per chart container
+function tooltip(container) {
+  let tip = container.querySelector(".tip");
+  if (!tip) { tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; container.appendChild(tip); }
+  return {
+    show(evt, html) {
+      tip.innerHTML = html; tip.hidden = false;
+      const box = container.getBoundingClientRect();
+      const x = evt.clientX - box.left, y = evt.clientY - box.top;
+      const w = tip.offsetWidth;
+      tip.style.left = Math.min(Math.max(4, x + 12), box.width - w - 4) + "px";
+      tip.style.top = Math.max(4, y - tip.offsetHeight - 10) + "px";
+    },
+    hide() { tip.hidden = true; }
+  };
+}
+function bindTip(node, tip, html) {
+  node.addEventListener("pointermove", e => tip.show(e, html));
+  node.addEventListener("pointerenter", e => tip.show(e, html));
+  node.addEventListener("pointerleave", () => tip.hide());
+}
+
+// Horizontal bar chart: rows [{label, sub, v, tipHtml}]
+function hbar(host, rows, { max, ref, refLabel, labelW, ticks = 4, fmtV = v => pct(v) }) {
+  host.innerHTML = "";
+  const W = host.clientWidth || 600;
+  const narrow = W < 480;
+  const lw = Math.min(labelW, W * (narrow ? 0.42 : 0.34));
+  const rowH = PRINTING ? 20 : 26, top = ref != null ? 22 : 6, bottom = 24, right = 46;
+  const H = top + rows.length * rowH + bottom;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" }, host);
+  const x = v => lw + (v / max) * (W - lw - right);
+  const tip = tooltip(host.parentElement);
+  // grid + ticks
+  for (let i = 0; i <= ticks; i++) {
+    const v = (max / ticks) * i, gx = x(v);
+    el("line", { x1: gx, x2: gx, y1: top - 4, y2: top + rows.length * rowH, class: i ? "grid" : "axis" }, svg);
+    text(svg, gx, H - 6, fmtV(v).replace(".0%", "%"), { "text-anchor": "middle", class: "muted" });
+  }
+  rows.forEach((r, i) => {
+    const y = top + i * rowH;
+    const g = el("g", { class: "row" }, svg);
+    const label = text(g, lw - 10, y + rowH / 2 + 4, r.label, { "text-anchor": "end" });
+    if (r.sub && !narrow) { const s = el("tspan", { class: "muted", dx: 6 }, label); s.textContent = r.sub; }
+    const bw = Math.max(2, x(r.v) - x(0));
+    // 4px rounded data end, square at baseline
+    const bh = rowH - 9, by = y + 4.5, bx = x(0);
+    const rr = Math.min(4, bw / 2);
+    el("path", { class: "bar", d: `M${bx},${by} H${bx + bw - rr} Q${bx + bw},${by} ${bx + bw},${by + rr} V${by + bh - rr} Q${bx + bw},${by + bh} ${bx + bw - rr},${by + bh} H${bx} Z` }, g);
+    text(g, bx + bw + 6, y + rowH / 2 + 4, fmtV(r.v), { class: "val" });
+    const hit = el("rect", { x: 0, y, width: W, height: rowH, class: "hit" }, g);
+    g.insertBefore(hit, g.firstChild);
+    bindTip(g, tip, r.tipHtml);
+  });
+  if (ref != null) {
+    const rx = x(ref);
+    el("line", { x1: rx, x2: rx, y1: top - 8, y2: top + rows.length * rowH, class: "ref" }, svg);
+    text(svg, rx, top - 11, refLabel, { "text-anchor": "middle", class: "muted" });
+  }
+}
+
+function renderConcentration(host) {
+  hbar(host, DATA.concentration.map(d => ({
+    label: d.label, sub: `${fmt(d.games)} games`, v: d.share,
+    tipHtml: `<b>${d.label}</b> of games by reviews<br>${fmt(d.games)} games · ${pct(d.share)} of all reviews`
+  })), { max: 0.8, labelW: 190 });
+}
+
+function renderTags(host) {
+  hbar(host, DATA.tags.map(d => ({
+    label: d.tag, sub: `n=${fmt(d.n)}`, v: d.v,
+    tipHtml: `<b>${d.tag}</b><br>${pct(d.v)} rated ≥80% positive<br>${fmt(d.n)} games with 50+ reviews`
+  })), { max: 1, ref: DATA.vpOverall, refLabel: "all indie 60%", labelW: 230 });
+}
+
+function renderSegments(host) {
+  hbar(host, DATA.segments.map(d => ({
+    label: d.label, sub: `n=${fmt(d.n)}`, v: d.hit,
+    tipHtml: `<b>${d.label}</b><br>${pct(d.hit)} reached 1,000 reviews<br>${fmt(d.n)} games launched 2018–2024`
+  })), { max: 0.25, ticks: 5, labelW: 240 });
+}
+
+function renderPrice(host) {
+  host.innerHTML = "";
+  const rows = DATA.price, W = host.clientWidth || 600, narrow = W < 480;
+  const left = 40, right = 8, top = 22, bottom = narrow ? 56 : 46, H = narrow ? 300 : 320;
+  const max = 0.4, svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" }, host);
+  const plotH = H - top - bottom, band = (W - left - right) / rows.length;
+  const y = v => top + plotH - (v / max) * plotH;
+  const tip = tooltip(host.parentElement);
+  for (let i = 0; i <= 4; i++) {
+    const v = (max / 4) * i, gy = y(v);
+    el("line", { x1: left, x2: W - right, y1: gy, y2: gy, class: i ? "grid" : "axis" }, svg);
+    text(svg, left - 6, gy + 4, pct(v, 0), { "text-anchor": "end", class: "muted" });
+  }
+  rows.forEach((d, i) => {
+    const g = el("g", { class: "row" }, svg);
+    const bw = Math.min(56, band * 0.62), bx = left + i * band + (band - bw) / 2;
+    const by = y(d.hit), bh = y(0) - by, rr = Math.min(4, bh / 2);
+    el("rect", { x: left + i * band, y: top, width: band, height: plotH + bottom, class: "hit" }, g);
+    el("path", { class: "bar", d: `M${bx},${y(0)} V${by + rr} Q${bx},${by} ${bx + rr},${by} H${bx + bw - rr} Q${bx + bw},${by} ${bx + bw},${by + rr} V${y(0)} Z` }, g);
+    text(g, bx + bw / 2, by - 6, pct(d.hit), { "text-anchor": "middle", class: "val" });
+    const cx = left + i * band + band / 2;
+    if (narrow) {
+      text(g, cx, H - bottom + 16, d.bucket.replace("–", "–​").split("–")[0], { "text-anchor": "middle" });
+      text(g, cx, H - bottom + 30, d.bucket.includes("–") ? "–" + d.bucket.split("–")[1] : "", { "text-anchor": "middle" });
+      text(g, cx, H - bottom + 46, fmt(d.n), { "text-anchor": "middle", class: "muted" });
+    } else {
+      text(g, cx, H - bottom + 18, d.bucket, { "text-anchor": "middle" });
+      text(g, cx, H - bottom + 34, "n=" + fmt(d.n), { "text-anchor": "middle", class: "muted" });
+    }
+    bindTip(g, tip, `<b>${d.bucket}</b><br>${pct(d.hit)} reached 1,000 reviews<br>median ${fmt(d.med)} reviews · ${fmt(d.n)} games`);
+  });
+}
+
+function renderOpportunity(host) {
+  host.innerHTML = "";
+  const rows = DATA.opportunity, W = host.clientWidth || 600, narrow = W < 480;
+  const left = 44, right = 16, top = 14, bottom = 40, H = narrow ? 320 : 360;
+  const xMax = 4, yMax = 0.12;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" }, host);
+  const x = v => left + (v / xMax) * (W - left - right);
+  const y = v => top + (H - top - bottom) - (v / yMax) * (H - top - bottom);
+  const tip = tooltip(host.parentElement);
+  for (let i = 0; i <= 4; i++) {
+    const vx = i, gx = x(vx);
+    el("line", { x1: gx, x2: gx, y1: top, y2: y(0), class: i ? "grid" : "axis" }, svg);
+    text(svg, gx, H - bottom + 18, vx + "×", { "text-anchor": "middle", class: "muted" });
+    const vy = (yMax / 4) * i, gy = y(vy);
+    el("line", { x1: left, x2: W - right, y1: gy, y2: gy, class: i ? "grid" : "axis" }, svg);
+    text(svg, left - 6, gy + 4, pct(vy, 0), { "text-anchor": "end", class: "muted" });
+  }
+  // "no growth" reference at 1x
+  el("line", { x1: x(1), x2: x(1), y1: top, y2: y(0), class: "ref" }, svg);
+  text(svg, x(1) + 5, top + 10, "same supply as 2018–20", { class: "muted" });
+  text(svg, (left + W - right) / 2, H - 6, "release growth, 2018–20 → 2022–24", { "text-anchor": "middle", class: "muted" });
+  const labelled = { "Story Rich": [8, 4], "Horror": [8, 4], "2D Platformer": [-8, -8, "end"], "Action-Adventure": [-8, 14, "end"],
+    "Exploration": [8, 4], "VR": [8, 4], "Arcade": [8, 12], "Simulation": [-8, -6, "end"], "Visual Novel": [8, -4] };
+  const narrowSet = new Set(["Story Rich", "2D Platformer", "Action-Adventure", "VR"]);
+  rows.forEach(d => {
+    const g = el("g", { class: "row" }, svg);
+    const cx = x(d.growth), cy = y(d.hit);
+    el("circle", { cx, cy, r: 14, class: "hit" }, g);
+    el("circle", { cx, cy, r: 5, class: "dot" }, g);
+    const lab = labelled[d.tag];
+    if (lab && (!narrow || narrowSet.has(d.tag))) text(g, cx + lab[0], cy + lab[1], d.tag, { "text-anchor": lab[2] || "start" });
+    bindTip(g, tip, `<b>${d.tag}</b><br>${d.growth.toFixed(2)}× releases · ${pct(d.hit)} hit rate<br>median ${d.med} reviews · ${fmt(d.n)} games`);
+  });
+}
+
+const RENDER = { concentration: renderConcentration, tags: renderTags, price: renderPrice, opportunity: renderOpportunity, segments: renderSegments };
+function renderAll() {
+  document.querySelectorAll("[data-chart]").forEach(h => RENDER[h.dataset.chart](h));
+}
+renderAll();
+// Compact bar rows when printing to PDF, so the snapshot stays short.
+const printMq = window.matchMedia("print");
+const setPrinting = on => { if (PRINTING !== on) { PRINTING = on; renderAll(); } };
+printMq.addEventListener("change", e => setPrinting(e.matches));
+window.addEventListener("beforeprint", () => setPrinting(true));
+window.addEventListener("afterprint", () => setPrinting(false));
+let rt; new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(renderAll, 80); }).observe(document.querySelector("main"));
+</script>

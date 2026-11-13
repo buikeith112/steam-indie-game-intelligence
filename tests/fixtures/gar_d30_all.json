@@ -1,0 +1,42 @@
+{
+ "response": {
+  "query_summary": {
+   "num_reviews": 1,
+   "review_score": 9,
+   "review_score_desc": "Overwhelmingly Positive",
+   "total_positive": 20817,
+   "total_negative": 480,
+   "total_reviews": 21297
+  },
+  "reviews": [
+   {
+    "recommendationid": "161031746",
+    "author": {
+     "steamid": "76561198000000000",
+     "num_reviews": 11,
+     "playtime_forever": 4323,
+     "playtime_last_two_weeks": 0,
+     "playtime_at_review": 2814,
+     "deck_playtime_at_review": 652,
+     "last_played": 1787635027
+    },
+    "language": "english",
+    "review": "[sample review text 0]",
+    "timestamp_created": 1710979184,
+    "timestamp_updated": 1710979184,
+    "voted_up": true,
+    "votes_up": 0,
+    "votes_funny": 0,
+    "weighted_vote_score": 0.4892317056655884,
+    "comment_count": 0,
+    "steam_purchase": true,
+    "received_for_free": false,
+    "written_during_early_access": false,
+    "primarily_steam_deck": false,
+    "refunded": false
+   }
+  ],
+  "cursor": "AoJw2M6Tr44DcuSk5gQ=",
+  "total_matching": 21297
+ }
+}
