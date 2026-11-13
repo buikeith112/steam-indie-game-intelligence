@@ -1,0 +1,64 @@
+// =====================================================================
+// DAX measures for the Steam Indie report. Create these in a dedicated
+// "_Measures" table (Enter Data -> empty table) so they're easy to find.
+// Table names assume Power Query renamed mart.xxx -> xxx (e.g. fact_game_metrics).
+// Convention: every rate has a matching "n" measure shown next to it.
+// =====================================================================
+
+// ---------- scope ----------
+Games = COUNTROWS ( dim_game )
+Games In Scope = CALCULATE ( [Games], dim_game[in_analytical_scope] = TRUE () )
+
+// ---------- popularity ----------
+Total Reviews = SUM ( fact_game_metrics[total_reviews] )
+Median Reviews = MEDIAN ( fact_game_metrics[total_reviews] )
+Median Owners (est.) = MEDIAN ( fact_game_metrics[est_owners_mid] )
+Hit Rate (1k+ reviews) = AVERAGEX ( fact_game_metrics, IF ( fact_game_metrics[is_hit_1k], 1, 0 ) )
+Share Under 10 Reviews =
+    DIVIDE (
+        COUNTROWS ( FILTER ( fact_game_metrics, fact_game_metrics[total_reviews] < 10 ) ),
+        COUNTROWS ( fact_game_metrics )
+    )
+
+// ---------- sentiment ----------
+Median Positive % = MEDIAN ( fact_game_metrics[positive_ratio] )
+Median Wilson Score = MEDIAN ( fact_game_metrics[wilson_lower_bound] )
+Games 50+ Reviews = COUNTROWS ( FILTER ( fact_game_metrics, fact_game_metrics[total_reviews] >= 50 ) )
+% Very Positive+ =
+    DIVIDE (
+        COUNTROWS ( FILTER ( fact_game_metrics, fact_game_metrics[is_very_positive_plus] ) ),
+        [Games 50+ Reviews]
+    )
+
+// ---------- Q1 early sentiment ----------
+Q1 Sample n =
+    COUNTROWS (
+        FILTER ( fact_game_metrics,
+            fact_game_metrics[early_reviews_30d] >= 10 && NOT ISBLANK ( fact_game_metrics[reviews_d31_365] ) )
+    )
+Median Early Positive % = MEDIAN ( fact_game_metrics[early_positive_ratio_30d] )
+Median Later Reviews (d31-365) = MEDIAN ( fact_game_metrics[reviews_d31_365] )
+Median Later/Early Ratio = MEDIAN ( fact_game_metrics[later_to_early_review_ratio] )
+Q1 Spearman rho =
+    CALCULATE ( MAX ( analysis_results[value] ),
+        analysis_results[analysis] = "q1_spearman_early_vs_later",
+        analysis_results[segment] = "all", analysis_results[metric] = "rho" )
+Q1 OLS Early Ratio Coef =
+    CALCULATE ( MAX ( analysis_results[value] ),
+        analysis_results[analysis] = "q1_ols_log_later_reviews", analysis_results[metric] = "coef_early_ratio" )
+// exp(coef * 0.10) - 1 = % change in later reviews per +10pp early positive share
+Q1 Effect per +10pp = EXP ( [Q1 OLS Early Ratio Coef] * 0.10 ) - 1
+
+// ---------- Q3 price ----------
+Median Launch Price = MEDIAN ( fact_game_metrics[launch_price_usd] )
+Median Hours per $ = MEDIAN ( fact_game_metrics[hours_per_dollar] )
+Median Days to First Discount = MEDIAN ( fact_game_metrics[days_to_first_discount] )
+
+// ---------- Q4 engagement ----------
+Median Playtime (h) = MEDIAN ( fact_game_metrics[median_playtime_h] )
+Median Active Ratio 2w = MEDIAN ( fact_game_metrics[active_ratio_2w] )
+Median Peak CCU = MEDIAN ( fact_game_metrics[peak_ccu_observed] )
+
+// ---------- freshness ----------
+Last Catalog Refresh = CALCULATE ( MAX ( data_freshness[last_data] ), data_freshness[source] = "catalog" )
+DQ Checks Failing = COUNTROWS ( FILTER ( dq_latest, dq_latest[passed] = FALSE () ) )
