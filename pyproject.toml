@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "steam-intel"
+version = "0.1.0"
+description = "Steam indie game intelligence: ingestion pipeline, PostgreSQL dataset and Power BI marts"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.27",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "SQLAlchemy>=2.0",
+    "psycopg[binary]>=3.1",
+    "alembic>=1.13",
+    "pandas>=2.2",
+    "python-dateutil>=2.9",
+    "typer>=0.12",
+]
+
+[project.optional-dependencies]
+analysis = ["scipy>=1.13", "statsmodels>=0.14", "jupyter>=1.0", "matplotlib>=3.8"]
+dev = ["pytest>=8.2", "ruff>=0.5", "pgserver>=0.1.4"]
+
+[project.scripts]
+steam-intel = "steam_intel.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+markers = ["db: tests that need a live PostgreSQL (STEAM_INTEL_TEST_DB_URL)"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint.per-file-ignores]
+"src/steam_intel/cli.py" = ["B008"]   # typer.Option in defaults is the Typer idiom
