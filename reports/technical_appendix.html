@@ -1,0 +1,480 @@
+<title>Steam Indie Data Pipeline</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single reading column of findings; each finding = claim, chart, caveat, data table. */
+:root {
+  --page: #f6f7f8;
+  --surface: #fcfcfb;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #7b7a75;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --series: #2a78d6;
+  --series-soft: #cde2fb;
+  --caution: #b45309;
+  --caution-bg: #fdf3e7;
+  --ring: rgba(11,11,11,0.10);
+  --good: #1f7a4d;
+  --code-bg: #f0f1ee;
+  --code-comment: #6b6a64;
+  --font-display: "Archivo", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #0f1012; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #8f8e88;
+    --grid: #2c2c2a; --axis: #45453f; --series: #3987e5; --series-soft: #1c3557;
+    --caution: #f0a35c; --caution-bg: #2a1f14; --ring: rgba(255,255,255,0.10); color-scheme: dark;
+    --good: #5cc08c; --code-bg: #131414; --code-comment: #8f8e88;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #0f1012; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #8f8e88;
+  --grid: #2c2c2a; --axis: #45453f; --series: #3987e5; --series-soft: #1c3557;
+  --caution: #f0a35c; --caution-bg: #2a1f14; --ring: rgba(255,255,255,0.10); color-scheme: dark;
+  --good: #5cc08c; --code-bg: #131414; --code-comment: #8f8e88;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--page); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+main { max-width: 860px; margin: 0 auto; padding-block: 48px 72px; display: flex; flex-direction: column; gap: 56px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(2rem, 5vw, 2.9rem); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: 1.55rem; font-weight: 700; letter-spacing: -0.01em; }
+p { margin: 0; max-width: 66ch; }
+.eyebrow { font-family: var(--font-data); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+header { display: flex; flex-direction: column; gap: 14px; }
+.lede { font-size: 1.12rem; color: var(--ink-2); }
+.meta { font-family: var(--font-data); font-size: 0.8rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 18px; }
+
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 6px; }
+.tile b { font-family: var(--font-display); font-size: 2.1rem; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
+.tile span { font-size: 0.9rem; color: var(--ink-2); line-height: 1.4; }
+
+section.finding { display: flex; flex-direction: column; gap: 16px; }
+.q { font-family: var(--font-data); font-size: 0.78rem; color: var(--series); letter-spacing: 0.04em; }
+.claim { font-size: 1.05rem; }
+.chart { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 16px 16px 10px; position: relative; min-width: 0; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart-title { font-size: 0.85rem; font-weight: 600; color: var(--ink-2); margin-bottom: 6px; }
+.caveat { border-left: 3px solid var(--caution); background: var(--caution-bg); padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 0.93rem; color: var(--ink); max-width: none; }
+.caveat strong { color: var(--caution); }
+a { color: var(--series); text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--series); outline-offset: 2px; border-radius: 4px; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 0.85rem; min-width: 100%; }
+th, td { text-align: right; padding: 5px 10px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { color: var(--muted); font-weight: 500; }
+
+svg text { font-family: var(--font-body); fill: var(--ink-2); font-size: 12px; }
+svg .val { font-family: var(--font-data); fill: var(--ink); font-size: 11.5px; }
+svg .muted { fill: var(--muted); font-size: 11px; }
+svg .grid { stroke: var(--grid); stroke-width: 1; }
+svg .axis { stroke: var(--axis); stroke-width: 1; }
+svg .ref { stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 4 3; }
+svg .bar { fill: var(--series); }
+svg .bar.dim { fill: var(--series-soft); }
+svg .hit { fill: transparent; cursor: default; }
+svg .hit:hover + .bar, svg g.row:hover .bar { filter: brightness(1.12); }
+svg .dot { fill: var(--series); stroke: var(--surface); stroke-width: 2; }
+
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--surface); font-size: 0.8rem; line-height: 1.4;
+       padding: 7px 10px; border-radius: 6px; white-space: nowrap; z-index: 5; box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
+.tip b { font-weight: 600; }
+
+/* ---------- Technical appendix ---------- */
+.appendix { display: flex; flex-direction: column; gap: 44px; }
+.note { font-size: 0.88rem; color: var(--ink-2); background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 12px 14px; max-width: none; }
+.appendix > header p { color: var(--ink-2); }
+.block { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.block h3 { font-size: 1.2rem; font-weight: 700; display: flex; gap: 10px; align-items: baseline; }
+.block h3 .num { font-family: var(--font-data); font-size: 0.8rem; font-weight: 500; color: var(--series); }
+.block h4 { margin: 4px 0 0; font-size: 0.95rem; font-family: var(--font-display); }
+.block p, .block li { font-size: 0.95rem; }
+.block ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; max-width: 72ch; }
+code { font-family: var(--font-data); font-size: 0.86em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+
+.flow { display: flex; gap: 6px; align-items: stretch; }
+.stage { flex: 1 1 0; min-width: 0; background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+.stage .step { font-family: var(--font-data); font-size: 0.68rem; letter-spacing: 0.06em; color: var(--series); }
+.stage strong { font-family: var(--font-display); font-size: 0.95rem; line-height: 1.2; }
+.stage p { font-size: 0.8rem; line-height: 1.45; color: var(--ink-2); }
+.stage .stat { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--grid); font-size: 0.75rem; color: var(--muted); line-height: 1.35; }
+.stage .stat b { display: block; font-family: var(--font-display); font-size: 1.25rem; color: var(--ink); font-weight: 800; }
+.arrow { flex: 0 0 12px; align-self: center; text-align: center; color: var(--muted); font-size: 1rem; }
+.arrow::before { content: "→"; }
+.opsband { background: var(--surface); border: 1px dashed var(--axis); border-radius: 10px; padding: 10px 14px; font-size: 0.85rem; color: var(--ink-2); }
+.opsband b { color: var(--ink); }
+
+.erd { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 12px; overflow-x: auto; }
+.erd svg { display: block; width: 100%; min-width: 720px; height: auto; }
+.erd .box { fill: var(--surface); stroke: var(--axis); stroke-width: 1; }
+.erd .hub { fill: var(--series-soft); stroke: var(--series); stroke-width: 1.5; }
+.erd .layer { fill: var(--page); stroke: var(--axis); stroke-width: 1; stroke-dasharray: 4 3; }
+.erd .link { stroke: var(--axis); stroke-width: 1.5; fill: none; }
+.erd .flowline { stroke: var(--muted); stroke-width: 1.5; fill: none; stroke-dasharray: 5 4; }
+.erd .head { fill: var(--muted); }
+.erd text.t { font-weight: 600; fill: var(--ink); font-size: 12.5px; }
+.erd text.k { font-family: var(--font-data); fill: var(--muted); font-size: 10.5px; }
+.erd text.n { font-family: var(--font-data); fill: var(--ink-2); font-size: 10.5px; text-anchor: end; }
+.erd text.f { fill: var(--ink); font-size: 11.5px; }
+.erd text.cap { font-family: var(--font-data); fill: var(--muted); font-size: 10px; letter-spacing: 0.06em; }
+
+.ref-table { width: 100%; }
+.ref-table th, .ref-table td { text-align: left; white-space: normal; vertical-align: top; padding: 7px 10px; font-size: 0.86rem; }
+.ref-table td:first-child { white-space: nowrap; font-weight: 500; }
+.ref-table td code { white-space: nowrap; }
+
+pre.sql { margin: 0; background: var(--code-bg); border: 1px solid var(--ring); border-radius: 10px; padding: 14px 16px; overflow-x: auto;
+          font-family: var(--font-data); font-size: 0.78rem; line-height: 1.55; color: var(--ink); }
+pre.sql .c { color: var(--code-comment); }
+.query { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 12px; align-items: start; }
+.result { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 10px 12px; }
+.result .cap { font-family: var(--font-data); font-size: 0.68rem; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 4px; }
+.result td.gap { text-align: center; color: var(--muted); }
+
+.status { font-family: var(--font-data); font-size: 0.78rem; white-space: nowrap; }
+.status.ok { color: var(--good); }
+.status.gate { color: var(--caution); }
+
+footer { font-size: 0.88rem; color: var(--ink-2); display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--grid); padding-top: 22px; }
+footer ul { margin: 0; padding-left: 18px; max-width: 70ch; }
+
+@media (max-width: 760px) {
+  .flow { flex-direction: column; }
+  .arrow::before { content: "↓"; }
+  .query { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+  main { padding-block: 28px 48px; gap: 44px; }
+  .tiles { grid-template-columns: minmax(0, 1fr); }
+}
+@media print {
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    --page: #ffffff; --surface: #ffffff; --ink: #0b0b0b; --ink-2: #52514e; --muted: #7b7a75; --grid: #e1e0d9; --axis: #c3c2b7;
+    --series: #2a78d6; --series-soft: #cde2fb; --caution: #b45309; --caution-bg: #fdf3e7; --ring: rgba(11,11,11,0.14);
+    --good: #1f7a4d; --code-bg: #f3f4f1; --code-comment: #6b6a64; color-scheme: light;
+  }
+  main { padding-block: 0; gap: 36px; }
+  .chart, .tiles, .flow, .erd, pre.sql, .result, .caveat, .ref-table tr, .opsband { break-inside: avoid; }
+  h2, h3, h4 { break-after: avoid; }
+  .tip { display: none !important; }
+  .erd svg { min-width: 0; }
+  .query { grid-template-columns: minmax(0, 1fr); }
+  pre.sql { white-space: pre-wrap; overflow-wrap: anywhere; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  svg .bar, svg .dot { transition: filter 120ms ease; }
+}
+</style>
+
+<main>
+  <section class="appendix" id="appendix">
+    <header>
+      <div class="eyebrow">Steam Indie Market Snapshot · technical appendix</div>
+      <h1>How the dataset was built</h1>
+      <p class="lede">Steam has no ready-made indie dataset. I pulled the raw API data into permanent, structured PostgreSQL tables, cleaned and validated it in Python and SQL, and modelled it for reporting. Every chart in the market snapshot is the output of a SQL query against those tables.</p>
+      <div class="meta"><span>Row counts: live from the database, 13 Nov 2026</span><span>Code: Python 3.12 · PostgreSQL 16</span></div>
+    </header>
+
+    <!-- A.1 -->
+    <div class="block">
+      <h3><span class="num">A.1</span>Pipeline as built</h3>
+      <div class="flow" role="list" aria-label="Pipeline stages">
+        <div class="stage" role="listitem">
+          <span class="step">1 · EXTRACT</span><strong>Steam APIs + SteamSpy</strong>
+          <p>Python + httpx. Per-host rate limits, retry with backoff on 429 and 5xx errors, automatic pause on 403.</p>
+          <div class="stat"><b>~6 min</b>to crawl all 65,471 indie games (~400 calls)</div>
+        </div>
+        <div class="arrow" aria-hidden="true"></div>
+        <div class="stage" role="listitem">
+          <span class="step">2 · LAND</span><strong>raw.api_responses</strong>
+          <p>Every response stored untouched as JSONB with its request and timestamp, before any parsing. Tables can be rebuilt without calling the APIs again.</p>
+          <div class="stat"><b>41,853</b>raw payloads stored</div>
+        </div>
+        <div class="arrow" aria-hidden="true"></div>
+        <div class="stage" role="listitem">
+          <span class="step">3 · CLEAN</span><strong>Python parsers</strong>
+          <p>Pure functions turn each payload into typed rows: dates, prices, owner ranges, company names, tags. Reviewer IDs are hashed.</p>
+          <div class="stat"><b>51</b>automated tests, all passing</div>
+        </div>
+        <div class="arrow" aria-hidden="true"></div>
+        <div class="stage" role="listitem">
+          <span class="step">4 · STORE</span><strong>PostgreSQL core</strong>
+          <p>19 normalized tables with primary and foreign keys. Idempotent upserts, price history, soft deletes.</p>
+          <div class="stat"><b>65,471</b>games · 874,198 game–tag rows</div>
+        </div>
+        <div class="arrow" aria-hidden="true"></div>
+        <div class="stage" role="listitem">
+          <span class="step">5 · MODEL</span><strong>SQL marts</strong>
+          <p>Star schema as materialized views, refreshed after every load. Feeds the market snapshot; Power BI relationships and measures defined in <code>powerbi/</code>.</p>
+          <div class="stat"><b>10</b>data-quality checks per run</div>
+        </div>
+      </div>
+      <div class="opsband"><b>ops schema, alongside every stage:</b> <code>ingestion_queue</code> holds one resumable work item per game per source (189,357 items), <code>ingestion_runs</code> logs every job, <code>data_quality_results</code> stores every check.</div>
+      <p style="font-size:0.85rem;color:var(--muted)">Stack: Python 3.12 (httpx, pydantic, SQLAlchemy, pandas, typer) · PostgreSQL 16 · Alembic migrations · pytest · ruff</p>
+    </div>
+
+    <!-- A.2 -->
+    <div class="block">
+      <h3><span class="num">A.2</span>Database schema</h3>
+      <p>The core layer is built around one hub table, <code>core.games</code>, keyed on Steam's own <code>app_id</code>. Everything else joins to it.</p>
+      <div class="erd">
+        <svg viewBox="0 0 900 468" role="img" aria-label="Entity relationship diagram: core.games hub joined by app_id to five bridge tables on the left and five history tables on the right; raw and ops pipeline layers below">
+          <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head"/></marker></defs>
+          <text class="cap" x="10" y="18">BRIDGES · MANY-TO-MANY</text>
+          <text class="cap" x="450" y="18" text-anchor="middle">HUB</text>
+          <text class="cap" x="620" y="18">HISTORY &amp; SNAPSHOTS</text>
+
+          <!-- left bus -->
+          <path class="link" d="M312,55 V335 M312,195 H345 M338,189 V201"/>
+          <g>
+            <rect class="box" x="10" y="30" width="270" height="50" rx="6"/><text class="t" x="22" y="51">game_companies → companies</text><text class="n" x="268" y="51">138,055</text><text class="k" x="22" y="69">PK (app_id, company_id, role)</text>
+            <rect class="box" x="10" y="100" width="270" height="50" rx="6"/><text class="t" x="22" y="121">game_tags → tags</text><text class="n" x="268" y="121">874,198</text><text class="k" x="22" y="139">PK (app_id, tag_id) · rank, votes</text>
+            <rect class="box" x="10" y="170" width="270" height="50" rx="6"/><text class="t" x="22" y="191">game_genres → genres</text><text class="n" x="268" y="191">25,374</text><text class="k" x="22" y="209">PK (app_id, genre_id)</text>
+            <rect class="box" x="10" y="240" width="270" height="50" rx="6"/><text class="t" x="22" y="261">game_categories → categories</text><text class="n" x="268" y="261">42,967</text><text class="k" x="22" y="279">PK (app_id, category_id)</text>
+            <rect class="box" x="10" y="310" width="270" height="50" rx="6"/><text class="t" x="22" y="331">game_languages</text><text class="n" x="268" y="331">55,845</text><text class="k" x="22" y="349">PK (app_id, language) · full_audio</text>
+            <path class="link" d="M280,55 H312 M280,49 L290,55 L280,61 M280,125 H312 M280,119 L290,125 L280,131 M280,195 H312 M280,189 L290,195 L280,201 M280,265 H312 M280,259 L290,265 L280,271 M280,335 H312 M280,329 L290,335 L280,341"/>
+          </g>
+
+          <!-- hub -->
+          <rect class="hub" x="345" y="90" width="210" height="205" rx="8"/>
+          <text class="t" x="357" y="112">core.games</text><text class="n" x="543" y="112">65,471</text>
+          <path class="link" d="M345,122 H555"/>
+          <text class="f" x="357" y="142">app_id <tspan class="k" dx="4">PK</tspan></text>
+          <text class="f" x="357" y="163">name · app_type</text>
+          <text class="f" x="357" y="184">launch_date · date_precision</text>
+          <text class="f" x="357" y="205">is_free · launch_price_cents</text>
+          <text class="f" x="357" y="226">store_review_count · % positive</text>
+          <text class="f" x="357" y="247">is_self_published · steam_deck</text>
+          <text class="f" x="357" y="268">delisted_at <tspan class="k" dx="4">soft delete</tspan></text>
+
+          <!-- right bus -->
+          <path class="link" d="M588,55 V335 M555,195 H588 M562,189 V201"/>
+          <g>
+            <rect class="box" x="620" y="30" width="270" height="50" rx="6"/><text class="t" x="632" y="51">price_history</text><text class="n" x="878" y="51">64,716</text><text class="k" x="632" y="69">PK (app_id, valid_from) · SCD-2</text>
+            <rect class="box" x="620" y="100" width="270" height="50" rx="6"/><text class="t" x="632" y="121">catalog_snapshots</text><text class="n" x="878" y="121">65,471</text><text class="k" x="632" y="139">PK (app_id, snapshot_date) · daily</text>
+            <rect class="box" x="620" y="170" width="270" height="50" rx="6"/><text class="t" x="632" y="191">review_snapshots</text><text class="n" x="878" y="191">5,584</text><text class="k" x="632" y="209">PK (app_id, snapshot_date)</text>
+            <rect class="box" x="620" y="240" width="270" height="50" rx="6"/><text class="t" x="632" y="261">review_windows</text><text class="n" x="878" y="261">15,711</text><text class="k" x="632" y="279">PK (app_id, window_code) · days 0–30 …</text>
+            <rect class="box" x="620" y="310" width="270" height="50" rx="6"/><text class="t" x="632" y="331">engagement_snapshots</text><text class="n" x="878" y="331">11,043</text><text class="k" x="632" y="349">PK (app_id, snapshot_date) · SteamSpy</text>
+            <path class="link" d="M588,55 H620 M620,49 L610,55 L620,61 M588,125 H620 M620,119 L610,125 L620,131 M588,195 H620 M620,189 L610,195 L620,201 M588,265 H620 M620,259 L610,265 L620,271 M588,335 H620 M620,329 L610,335 L620,341"/>
+          </g>
+
+          <!-- pipeline layers -->
+          <text class="cap" x="10" y="394">PIPELINE LAYERS</text>
+          <path class="flowline" d="M400,402 V300" marker-end="url(#ah)"/>
+          <text class="k" x="392" y="356" text-anchor="end">parse → upsert</text>
+          <path class="flowline" d="M500,298 V400" marker-end="url(#ah)"/>
+          <text class="k" x="508" y="356">enqueue</text>
+          <rect class="layer" x="10" y="404" width="430" height="56" rx="6"/>
+          <text class="t" x="22" y="426">raw.api_responses</text><text class="n" x="428" y="426">41,853</text>
+          <text class="k" x="22" y="446">PK response_id · JSONB payload, source, app_id, fetched_at</text>
+          <rect class="layer" x="460" y="404" width="430" height="56" rx="6"/>
+          <text class="t" x="472" y="426">ops.ingestion_queue</text><text class="n" x="878" y="426">189,357</text>
+          <text class="k" x="472" y="446">PK (source, app_id) · status, attempts, next_retry_at</text>
+        </svg>
+      </div>
+      <p style="font-size:0.85rem;color:var(--muted)">Each line is a foreign key on <code>app_id</code>: one game (bar) to many rows (fork). Also in core, same pattern: <code>review_histogram</code>, <code>reviews</code> (sample), <code>player_count_snapshots</code>, <code>news_events</code>.</p>
+      <h4>Why it is structured this way</h4>
+      <ul>
+        <li><b>Three layers.</b> <code>raw</code> keeps the evidence, <code>core</code> is normalized so each fact is stored once, and <code>mart</code> is shaped for reporting. A parsing fix never needs new API calls, and reports never touch messy tables.</li>
+        <li><b>Steam's IDs are the keys.</b> <code>app_id</code> is stable across all four APIs, so the same game from different sources lands in one row, and re-runs update rows instead of duplicating them.</li>
+        <li><b>Bridge tables for many-to-many.</b> A game has many tags and companies. Developers and publishers share one <code>companies</code> table with the role on the bridge, which makes "self-published" a simple comparison.</li>
+        <li><b>History is keyed by game and date.</b> Each daily run adds rows instead of overwriting yesterday. Prices change rarely, so they use SCD-2 (<code>valid_from</code>/<code>valid_to</code>), and a partial unique index allows only one current price per game.</li>
+        <li><b>Nothing is hard-deleted.</b> Delisted games keep their row with a <code>delisted_at</code> date and stay in every rate, so failed games are not silently dropped from success rates (survivorship bias). One gap remains: Steam's catalog lists only games on sale today, so games removed before the first crawl were never captured, and older cohorts look somewhat better than they were.</li>
+      </ul>
+      <h4>Reporting layer (mart)</h4>
+      <div class="table-wrap">
+        <table class="ref-table">
+          <thead><tr><th>Object</th><th>Grain</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>dim_game</code></td><td>1 row per game</td><td>Attributes and groupings: launch year, price bucket, primary genre tag, Steam Deck status, in-scope flag</td></tr>
+            <tr><td><code>fact_game_metrics</code></td><td>1 row per game</td><td>Every metric defined once in SQL: positive ratio, Wilson lower bound, "≥80% positive" flag, hit flag, early-review sentiment, playtime</td></tr>
+            <tr><td><code>bridge_game_tag</code> → <code>dim_tag</code></td><td>game × tag</td><td>Each game's top five genre tags, for genre filters without double counting games</td></tr>
+            <tr><td><code>dim_price_bucket</code>, <code>dim_date</code></td><td>lookup</td><td>One shared definition of price buckets and the calendar</td></tr>
+            <tr><td><code>tag_summary</code>, <code>price_bucket_summary</code></td><td>1 row per tag / bucket</td><td>Pre-computed medians, which are hard to compute correctly in DAX across a many-to-many bridge</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- A.3 -->
+    <div class="block">
+      <h3><span class="num">A.3</span>Cleaning, missing values and duplicates</h3>
+      <div class="table-wrap">
+        <table class="ref-table">
+          <thead><tr><th>Problem</th><th>How it is handled</th></tr></thead>
+          <tbody>
+            <tr><td>Mixed formats</td><td>Release dates arrive as "12 Jan, 2024", "Q1 2025" or "Coming soon"; prices in cents; SteamSpy owners as "20,000 .. 50,000". Each is parsed into typed columns, keeping the raw string and a <code>date_precision</code> flag.</td></tr>
+            <tr><td>Inconsistent names</td><td>"Devolver Digital, Inc." and "Devolver Digital™" become one company: strip ™®©, Unicode-normalize, case-fold, drop legal suffixes, then enforce a unique normalized name (54,444 companies).</td></tr>
+            <tr><td>Tags that aren't genres</td><td>61 of 429 tags (Indie, Singleplayer, 2D…) are flagged <code>is_meta</code> and excluded from genre analysis.</td></tr>
+            <tr><td>Wrong price source</td><td>The batch API sometimes returned a bundle price (one game showed $44.98 for a two-game bundle). Bundle offers are now ignored, and a regression test covers it.</td></tr>
+            <tr><td>Missing values</td><td>Missing stays <code>NULL</code> in storage, never 0: no review data is not the same as zero reviews. Queries decide case by case (see the note in A.4). SteamSpy hides data for some games, so 606 are marked "skip", not zero. Games with no usable price get an "unknown" bucket and are left out of price charts rather than imputed.</td></tr>
+            <tr><td>Sources that disagree</td><td>Four APIs fill different columns of the same row. Upserts use <code>COALESCE(new, existing)</code>, so a source without a field cannot blank a value another source already filled.</td></tr>
+            <tr><td>Duplicates</td><td>Steam IDs as primary keys, plus composite keys such as <code>(app_id, snapshot_date)</code>. Every write is either an upsert (<code>INSERT … ON CONFLICT</code>) or a delete-and-reinsert of one game's bridge rows, so re-running a game or a whole day updates rows instead of duplicating them.</td></tr>
+            <tr><td>Personal data</td><td>Reviewer SteamIDs are SHA-256 hashed and review text is dropped before anything is stored, including in the raw layer.</td></tr>
+          </tbody>
+        </table>
+      </div>
+<pre class="sql"><span class="c">-- Upsert into core.games: safe to re-run, and never overwrites a known value with NULL</span>
+INSERT INTO core.games (app_id, name, store_review_count, launch_date, ...)
+VALUES (:app_id, :name, :store_review_count, :launch_date, ...)
+ON CONFLICT (app_id) DO UPDATE SET
+    store_review_count = COALESCE(EXCLUDED.store_review_count, core.games.store_review_count),
+    launch_date        = COALESCE(EXCLUDED.launch_date,        core.games.launch_date),
+    updated_at         = now();</pre>
+      <p><b>Loading.</b> Each game is loaded in one transaction per source: save the raw response, parse it, upsert the rows, mark its queue item done. If the process stops, at most one game is lost and the next run resumes from <code>ops.ingestion_queue</code>. Workers claim items with <code>FOR UPDATE SKIP LOCKED</code>, so three run in parallel (one per API host) without colliding. Schema changes ship as Alembic migrations.</p>
+    </div>
+
+    <!-- A.4 -->
+    <div class="block">
+      <h3><span class="num">A.4</span>Two queries behind the charts</h3>
+      <h4>Hit rate by launch price (Question 3 chart)</h4>
+      <div class="query">
+<pre class="sql"><span class="c">-- Share of games reaching 1,000 reviews, by price bucket.
+-- Launches 2018–2024, so every game has had ~2 years.
+-- Delisted games are deliberately NOT filtered out.</span>
+SELECT b.price_bucket,
+       count(*) AS games,
+       avg((COALESCE(f.total_reviews, 0) >= 1000)::int)
+           AS hit_rate,
+       percentile_cont(0.5) WITHIN GROUP
+           (ORDER BY COALESCE(f.total_reviews, 0))
+           AS median_reviews
+FROM mart.dim_game g
+JOIN mart.fact_game_metrics f USING (app_id)
+JOIN mart.dim_price_bucket  b
+  ON b.price_bucket_id = g.price_bucket_id
+WHERE g.launch_date BETWEEN DATE '2018-01-01'
+                        AND DATE '2024-12-31'
+GROUP BY b.price_bucket_id, b.price_bucket
+ORDER BY b.price_bucket_id;</pre>
+        <div class="result table-wrap">
+          <div class="cap">RESULT · 13 NOV CATALOG CRAWL</div>
+          <table>
+            <thead><tr><th>Bucket</th><th>Games</th><th>Hit rate</th><th>Median</th></tr></thead>
+            <tbody>
+              <tr><td>Free</td><td>5,163</td><td>6.2%</td><td>39</td></tr>
+              <tr><td>Under $5</td><td>16,797</td><td>1.2%</td><td>7</td></tr>
+              <tr><td>$5–9.99</td><td>6,530</td><td>3.1%</td><td>12</td></tr>
+              <tr><td>$10–14.99</td><td>2,783</td><td>8.4%</td><td>33</td></tr>
+              <tr><td>$15–19.99</td><td>1,544</td><td>19.6%</td><td>105</td></tr>
+              <tr><td>$20–29.99</td><td>578</td><td>33.2%</td><td>184.5</td></tr>
+              <tr><td>$30+</td><td>264</td><td>12.9%</td><td>2</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="note"><b>Why <code>COALESCE(total_reviews, 0)</code> here, when missing values stay NULL elsewhere?</b> Steam's catalog returns a review count for every listed game, including an explicit 0. In this population none is missing: in the 13 Nov crawl, all 34,116 games launched 2018–2024 have a count, and 2,674 of them have zero reviews. So the COALESCE changes no result here. It is a guard for the denominator: if a count were ever missing, that game would stay in as "not a hit" rather than being dropped, which would quietly inflate the hit rate. A ratio is different. A game with no reviews has no positive share, so <code>positive_ratio</code> stays NULL and those games are left out of sentiment metrics. Games with no usable price (457 here) have no bucket and are excluded from this chart.</p>
+      <h4>Share of games rated ≥80% positive, by genre (Question 2 chart)</h4>
+      <div class="query">
+<pre class="sql"><span class="c">-- bridge_game_tag = each game's top 5 genre tags.
+-- is_very_positive_plus is defined once in fact_game_metrics:
+--   total_reviews >= 50 AND positive / total >= 0.80</span>
+SELECT t.name                            AS tag,
+       count(*)                          AS games,
+       avg(f.is_very_positive_plus::int) AS share_80_plus
+FROM mart.bridge_game_tag b
+JOIN core.tags              t USING (tag_id)
+JOIN mart.dim_game          g USING (app_id)
+JOIN mart.fact_game_metrics f USING (app_id)
+WHERE g.in_analytical_scope   <span class="c">-- 2018+, ≥10 reviews</span>
+  AND f.total_reviews >= 50   <span class="c">-- enough reviews to rate</span>
+GROUP BY t.name
+HAVING count(*) >= 400        <span class="c">-- hide small genres</span>
+ORDER BY share_80_plus DESC;</pre>
+        <div class="result table-wrap">
+          <div class="cap">RESULT · 13 NOV CRAWL · 26 TAGS</div>
+          <table>
+            <thead><tr><th>Tag</th><th>Games</th><th>≥80%</th></tr></thead>
+            <tbody>
+              <tr><td>2D Platformer</td><td>415</td><td>78.1%</td></tr>
+              <tr><td>Point &amp; Click</td><td>617</td><td>76.8%</td></tr>
+              <tr><td>Platformer</td><td>676</td><td>74.1%</td></tr>
+              <tr><td>Puzzle</td><td>1,866</td><td>73.6%</td></tr>
+              <tr><td>Arcade</td><td>616</td><td>72.1%</td></tr>
+              <tr><td class="gap" colspan="3">⋮ 20 more</td></tr>
+              <tr><td>Incremental</td><td>460</td><td>47.0%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- A.5 -->
+    <div class="block">
+      <h3><span class="num">A.5</span>Refresh process: detecting new and changed records</h3>
+      <p>The pipeline is incremental. <code>steam-intel daily</code> re-crawls the catalog (about 400 calls), compares it with what is stored, and re-queues only the per-game work that is due. <code>scripts/register_daily_task.ps1</code> schedules it as a 03:00 Windows task.</p>
+      <div class="table-wrap">
+        <table class="ref-table">
+          <thead><tr><th>Change</th><th>How it is detected</th><th>Where it lands</th></tr></thead>
+          <tbody>
+            <tr><td>New game</td><td>An <code>app_id</code> in today's crawl that is not in <code>core.games</code></td><td>Inserted, then queued for per-game collection</td></tr>
+            <tr><td>Removed game</td><td>Not seen in today's crawl (<code>last_seen_in_catalog_at</code> is older than the run), then confirmed against its store page</td><td><code>delisted_at</code> set; the row is kept</td></tr>
+            <tr><td>Price change</td><td>Today's price compared with the game's open <code>price_history</code> row</td><td>Old row closed, new version opened (SCD-2)</td></tr>
+            <tr><td>Review growth</td><td>Review count captured for every game on every crawl</td><td>One <code>catalog_snapshots</code> row per game per day</td></tr>
+            <tr><td>Metadata drift</td><td>Store details fetched for new games immediately, then re-fetched on a rotation (1/30 of games per day)</td><td>Upserted into <code>core.games</code> and its bridges</td></tr>
+            <tr><td>Early-review window closes</td><td>A game turns 30 or 365 days old</td><td><code>review_windows</code> row recomputed and marked complete</td></tr>
+          </tbody>
+        </table>
+      </div>
+<pre class="sql"><span class="c">-- Price change (SCD-2). Python compares the new price with the open row
+-- and runs this only if it differs.
+-- 1. Close the current version</span>
+UPDATE core.price_history SET valid_to = :observed_at
+ WHERE app_id = :app_id AND valid_to IS NULL;
+<span class="c">-- 2. Open the new version</span>
+INSERT INTO core.price_history
+       (app_id, valid_from, initial_cents, final_cents, discount_pct, source)
+VALUES (:app_id, :observed_at, :initial_cents, :final_cents, :discount_pct, :source);
+
+<span class="c">-- Guardrail in the schema: at most one current price per game</span>
+CREATE UNIQUE INDEX ux_price_open ON core.price_history (app_id)
+ WHERE valid_to IS NULL;</pre>
+      <p>After loading, the run refreshes the materialized views with <code>REFRESH MATERIALIZED VIEW CONCURRENTLY</code>, so reports stay readable during the reload. It then recomputes the statistics, runs the data-quality checks, and logs the outcome to <code>ops.ingestion_runs</code>. Price history is already recording versions: for 5 games, the store-page API reported a different price than the batch API, so each has two rows with the source stored on each.</p>
+    </div>
+
+    <!-- A.6 -->
+    <div class="block">
+      <h3><span class="num">A.6</span>Validation completed</h3>
+      <h4>Data-quality checks (<code>steam-intel dq</code>, 13 Nov 2026)</h4>
+      <div class="table-wrap">
+        <table class="ref-table">
+          <thead><tr><th>Check</th><th>Rule</th><th>Observed</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Names present</td><td>Every game has a name</td><td>0 violations</td><td><span class="status ok">✓ Pass</span></td></tr>
+            <tr><td>Review totals add up</td><td>positive + negative = total</td><td>0 violations</td><td><span class="status ok">✓ Pass</span></td></tr>
+            <tr><td>Ratios in range</td><td>% positive between 0 and 100</td><td>0 violations</td><td><span class="status ok">✓ Pass</span></td></tr>
+            <tr><td>Launch dates plausible</td><td>No released game launches in the future</td><td>0 violations</td><td><span class="status ok">✓ Pass</span></td></tr>
+            <tr><td>One current price</td><td>≤1 open price row per game (SCD-2)</td><td>0 violations</td><td><span class="status ok">✓ Pass</span></td></tr>
+            <tr><td>Prices valid</td><td>No negative prices</td><td>0 violations</td><td><span class="status ok">✓ Pass</span></td></tr>
+            <tr><td>Catalog freshness</td><td>Crawled within 36 hours</td><td>3.4 h</td><td><span class="status ok">✓ Pass</span></td></tr>
+            <tr><td>Failed work items</td><td>≤100 items that failed 5 times</td><td>0</td><td><span class="status ok">✓ Pass</span></td></tr>
+            <tr><td>Store-details coverage</td><td>≥95% of in-scope games</td><td>30.2%</td><td><span class="status gate">◔ Gate</span></td></tr>
+            <tr><td>Early-review coverage</td><td>≥95% of in-scope games</td><td>20.7%</td><td><span class="status gate">◔ Gate</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="font-size:0.88rem;color:var(--ink-2)">The two coverage checks gate any result that depends on per-game data. That is why the market snapshot covers only questions answerable from the full catalog crawl.</p>
+      <h4>Other checks</h4>
+      <ul>
+        <li><b>Completeness.</b> The first crawl returned 60,230 games. Re-querying with each sort order showed that the default ordering shifts while paging. A stable sort returned 65,471, and the crawl now warns if coverage drops below 99.5%. Both runs are logged in <code>ops.ingestion_runs</code>.</li>
+        <li><b>Automated tests (51).</b> They cover parsers against recorded real API responses, and retry and backoff against simulated 429, 403 and 500 errors. One test loads data end to end (catalog → workers → marts → checks) into a throwaway PostgreSQL.</li>
+        <li><b>Cross-source reconciliation.</b> Per-game review totals were compared with the catalog's totals for the same games. Paid games agreed (median ratio 1.00). All 2,427 free games collected so far came back far too low (Splitgate: 165 against 110,314). The cause: the per-game call counted only "Steam purchases", and free games have none. Free games now count all reviews, matching the store page, and the 2,460 affected games were re-queued. The snapshot was unaffected, because it was computed from the catalog totals.</li>
+        <li><b>Spot checks.</b> Stored review totals, prices and tags were compared with live store pages for well-known games. This is how the bundle-price bug was found.</li>
+        <li><b>Analysis guardrails.</b> Segments with fewer than 30 games are hidden, and regressions require at least 200 games.</li>
+        <li><b>Privacy audit.</b> A query confirms that 0 stored review payloads contain a raw SteamID or review text.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
